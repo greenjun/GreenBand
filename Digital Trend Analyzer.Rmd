@@ -1,0 +1,116 @@
+---
+title: "Digital Trend Analyzer"
+author: "Green Band"
+date: '2018-12-16'
+output:
+  html_document:
+    code_folding: hide
+    toc: true
+    toc_depth: 2
+    toc_float: true
+    theme: readable
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = T, message = F)
+```
+
+
+
+# Step 0 : 분석 환경 설정
+```{r, echo = F}
+library(knitr)
+library(latexpdf)
+```
+
+```{r}
+library(dplyr)
+
+library(ggplot2)
+
+library(ggrepel)
+
+library(readr)
+
+library(stringr)
+```
+
+# Step 1 : data pre-processing
+
+# Step 2 : EDA
+
+# Step 3 : Modeling
+
+# Step 4 : Insight
+
+# Step 5 : Proposal for New Service
+
+
+
+
+
+
+
+```{r}
+summary(cars)
+```
+
+```{r, fig.cap = "Image1"}
+plot(iris$Sepal.Length,iris$Petal.Length)
+```
+
+```{r, results = 'asis'}
+kable(head(iris), caption = 'Table1', align = 'c')
+```
+
+
+*기울임*  
+\*기울임*    
+**굵게**  
+**`형광펜`**  
+~~지우기~~--이렇게 수정 
+
+
+줄바꿈은 이 라인의 끝에 띄어쓰기 두번  
+하면 된당 
+
+##### 1. list
+  + a;lskdfj
+  + asdl;fk
+      - asfasf
+        
+##### 1. list
+  1. a;lskdfj
+  2. asdl;fk
+      i) asfasf
+      i) efsgsdg
+        
+##### box
+    safasdfas  
+
+fsadfasf
+        
+        
+
+# SADFSFAS
+## sadfsadfa
+### sdfasf
+#### asdfasfasf
+##### sfasfasfasd
+
+내용 내용 내용 
+
+## Quarterly Results {.tabset .tabset-fade .tabset-pills}
+
+### By Product
+
+(tab content)
+
+### By Region
+
+(tab content)
+
+## sdfsa
+<http://rmarkdown.rstudio.com>
+
+[name](http://rmarkdown.rstudio.com)
