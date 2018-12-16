@@ -5,19 +5,19 @@ date: '2018-12-16'
 output:
   html_document:
     code_folding: hide
+    toc_float: true
     toc: true
     toc_depth: 2
-    toc_float: true
     theme: readable
+    keep_md: true
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = T, message = F)
+knitr::opts_chunk$set(echo = T, message = F, warning = F)
 ```
 
-
-
 # Step 0 : 분석 환경 설정
+
 ```{r, echo = F}
 library(knitr)
 library(latexpdf)
@@ -52,12 +52,20 @@ library(stringr)
 
 
 ```{r}
-summary(cars)
+summary(iris)
 ```
+
+
 
 ```{r, fig.cap = "Image1"}
 plot(iris$Sepal.Length,iris$Petal.Length)
 ```
+
+```{r, fig.cap = "Image2"}
+library(GGally)
+ggpairs(iris, aes(color=Species), columns=c("Sepal.Length","Sepal.Width","Petal.Length","Petal.Width"))
+```
+
 
 ```{r, results = 'asis'}
 kable(head(iris), caption = 'Table1', align = 'c')
@@ -88,7 +96,7 @@ kable(head(iris), caption = 'Table1', align = 'c')
 ##### box
     safasdfas  
 
-fsadfasf
+
         
         
 
