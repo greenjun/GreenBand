@@ -14,10 +14,6 @@ library(knitr) # Tidy document
 
 library(ggrepel) # ggplot tidy text
 
-
-
-readr::
-
 setwd("C:/Project/GreenBand_Lpoint5/Source/") ; getwd()
 
 load(file="Code/R/Digital_Trend_Analyzer.RData")
@@ -106,8 +102,6 @@ summary(Session_original) ; View(Session_original)
 
 View(Session_original %>%
   arrange(SESS_SEQ, SESS_DT))
-
-
 
 
 
