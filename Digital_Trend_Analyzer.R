@@ -1,24 +1,30 @@
 #=====================================================================================================================
 # 2018-12-13
 # 
-# topic : Online preference index
+# topic : Digital Trend Analyzer
 # 
-# Capyright 2018 by Yun Junhyuck
+# Capyright 2018 by GreenBand
 #=====================================================================================================================
 # Step 0 : 분석 환경 설정
 #=====================================================================================================================
 
-library(dplyr)
+library(knitr) # Tidy document
 
-library(ggplot2)
+library(tidyverse) # Preprocessing
 
-library(ggrepel)
+library(ggplot2) # Visualizing
+
+library(ggrepel) # ggplot tidy text
 
 library(readr)
 
 library(stringr)
 
-setwd("C:/Users/YunJunHyuck/Desktop/lpoint/lpoint_5/") ; getwd()
+
+
+readr::
+
+setwd("C:/Project/GreenBand_Lpoint5/Source/") ; getwd()
 
 load(file="Code/R/Digital_Trend_Analyzer.RData")
 
@@ -28,45 +34,45 @@ load(file="Code/R/Digital_Trend_Analyzer.RData")
 
 ## Search1 data
 
-Search1_original <- read.csv("Data/Search1_original.csv", header = T, encoding = "UTF-8")
+#Search1_original <- read.csv("Data/Search1_original.csv", header = T, encoding = "UTF-8")
 
-Search1_original[is.na(Search1_original$SEARCHCNT),5] <- Search1_original[!is.na(Search1_original$X),4]
+#Search1_original[is.na(Search1_original$SEARCHCNT),5] <- Search1_original[!is.na(Search1_original$X),4]
 
-Search1_original <- Search1_original[,-4]
+#Search1_original <- Search1_original[,-4]
 
-colnames(Search1_original) <- c("CLNT_ID", "SESS_ID", "KWD_NM", "SEARCH_CNT")
+#colnames(Search1_original) <- c("CLNT_ID", "SESS_ID", "KWD_NM", "SEARCH_CNT")
 
-Search1_original$KWD_NM <- gsub(pattern = ",", replacement = "", Search1_original$KWD_NM)
+#Search1_original$KWD_NM <- gsub(pattern = ",", replacement = "", Search1_original$KWD_NM)
 
 ## Session data
 
-Session_original <- read.csv("Data/Session_original.csv", stringsAsFactors = F, header = T, encoding = "UTF-8")
+#Session_original <- read.csv("Data/Session_original.csv", stringsAsFactors = F, header = T, encoding = "UTF-8")
 
-colnames(Session_original) <- c("CLNT_ID", "SESS_ID", "SESS_SEQ", "SESS_DT", "TOT_PAG_VIEW_CT", "TOT_SESS_HR_V", "DVC_CTG_NM", "ZON_NM", "CITY_NM")
+#colnames(Session_original) <- c("CLNT_ID", "SESS_ID", "SESS_SEQ", "SESS_DT", "TOT_PAG_VIEW_CT", "TOT_SESS_HR_V", "DVC_CTG_NM", "ZON_NM", "CITY_NM")
 
-sapply(Session_original, function(x){sum(is.na(x))})
+#sapply(Session_original, function(x){sum(is.na(x))})
 
-which(Session_original$TOT_SESS_HR_V == "")
+#which(Session_original$TOT_SESS_HR_V == "")
 
 ## Custom data
 
-Custom_original <- read.csv("Data/Custom_original.csv", stringsAsFactors = F, header = T, encoding = "UTF-8")
+#Custom_original <- read.csv("Data/Custom_original.csv", stringsAsFactors = F, header = T, encoding = "UTF-8")
 
-colnames(Custom_original) <- c("CLNT_ID", "CLNT_GENDER", "CLNT_AGE" )
+#colnames(Custom_original) <- c("CLNT_ID", "CLNT_GENDER", "CLNT_AGE" )
 
 ## Master data - due to special character, moved data to python
 
-Master_original <- read.csv("Data/python_Master_original.csv", stringsAsFactors = F, header = T)
+#Master_original <- read.csv("Data/python_Master_original.csv", stringsAsFactors = F, header = T)
 
-Master_original <- Master_original[c(1:847652),]
+#Master_original <- Master_original[c(1:847652),]
 
 ## Product data
 
-Product_original <- read.csv("Data/python_Product_original.csv", stringsAsFactors = F, header = T)
+#Product_original <- read.csv("Data/python_Product_original.csv", stringsAsFactors = F, header = T)
 
 ## Search2
 
-Search2_original <- read.csv("Data/python_Search2_original.csv", stringsAsFactors = F, header = T)
+#Search2_original <- read.csv("Data/python_Search2_original.csv", stringsAsFactors = F, header = T)
 
 ## save RData
 
