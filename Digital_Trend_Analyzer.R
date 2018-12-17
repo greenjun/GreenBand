@@ -8,17 +8,11 @@
 # Step 0 : 분석 환경 설정
 #=====================================================================================================================
 
+library(tidyverse) # Preprocessing, Visualizing
+
 library(knitr) # Tidy document
 
-library(tidyverse) # Preprocessing
-
-library(ggplot2) # Visualizing
-
 library(ggrepel) # ggplot tidy text
-
-library(readr)
-
-library(stringr)
 
 
 
