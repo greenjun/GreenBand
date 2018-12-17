@@ -1,5 +1,4 @@
-# GreenBand
-## Digital Trend Analyzer
+## Digital Trend Analyzer Rmarkdown
 
 http://htmlpreview.github.io/?https://github.com/greenjun/GreenBand/blob/master/Digital_Trend_Analyzer.html
 
