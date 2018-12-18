@@ -4,7 +4,7 @@ https://github.com/greenjun/GreenBand/blob/master/Basic_Material.md
 
 ## Digital Trend Analyzer Rmarkdown
 
-http://htmlpreview.github.io/?https://github.com/greenjun/GreenBand/blob/master/Digital_Trend_Analyzer.html
+http://htmlpreview.github.io/?https://github.com/greenjun/GreenBand/blob/master/Digital_Trend_Analyzer_report.html
 
 or just open .html using Explorer
 
