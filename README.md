@@ -11,3 +11,7 @@ Digital Trend Analyzer_report.Rmd
 ## Analyze using 
 
 Digital Trend Analyzer.R
+
+## Basic Material
+
+Basic_Material.md
