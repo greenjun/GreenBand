@@ -11,19 +11,30 @@ output:
     theme: readable
     keep_md: true
 ---
-
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = T, message = F, warning = F)
 ```
 
+
+
+
+
+
+
+
+
 # Step 0 : 분석 환경 설정
 
 ```{r, echo = F}
+
 library(knitr)
+
 library(latexpdf)
+
 ```
 
 ```{r}
+
 library(dplyr)
 
 library(ggplot2)
@@ -33,6 +44,7 @@ library(ggrepel)
 library(readr)
 
 library(stringr)
+
 ```
 
 # Step 1 : data pre-processing
@@ -46,23 +58,9 @@ library(stringr)
 # Step 5 : Proposal for New Service
 
 
-
-
-```{r}
-summary(iris)
-```
-
-
-
 ```{r, fig.cap = "Image1"}
 plot(iris$Sepal.Length,iris$Petal.Length)
 ```
-
-```{r, fig.cap = "Image2"}
-library(GGally)
-ggpairs(iris, aes(color=Species), columns=c("Sepal.Length","Sepal.Width","Petal.Length","Petal.Width"))
-```
-
 
 ```{r, results = 'asis'}
 kable(head(iris), caption = 'Table1', align = 'c')
@@ -75,35 +73,14 @@ kable(head(iris), caption = 'Table1', align = 'c')
 **`형광펜`**  
 ~~지우기~~--이렇게 수정 
 
-
-줄바꿈은 이 라인의 끝에 띄어쓰기 두번  
-하면 된당 
-
-##### 1. list
-  + a;lskdfj
-  + asdl;fk
-      - asfasf
-        
 ##### 1. list
   1. a;lskdfj
-  2. asdl;fk
+  + asdl;fk
       i) asfasf
       i) efsgsdg
         
 ##### box
     safasdfas  
-
-
-        
-        
-
-# SADFSFAS
-## sadfsadfa
-### sdfasf
-#### asdfasfasf
-##### sfasfasfasd
-
-내용 내용 내용 
 
 ## Quarterly Results {.tabset .tabset-fade .tabset-pills}
 
@@ -115,7 +92,7 @@ kable(head(iris), caption = 'Table1', align = 'c')
 
 (tab content)
 
-## sdfsa
+## Link
 <http://rmarkdown.rstudio.com>
 
 [name](http://rmarkdown.rstudio.com)
