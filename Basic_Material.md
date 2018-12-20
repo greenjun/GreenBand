@@ -12,9 +12,27 @@
 
 ### 온라인 행동 데이터로 할 수 있는 것은?
 
++ analyze the activity patterns of customers  
+어떤 것을 클릭 하기 이전에 어떠한 행동이 있었고 무엇을 하였는지 파악 가능  
+이를 통해 고객이 website에서 바로 살지 아니면 reseller에세 살지 마트에서 살지 파악 
+
 + converting consumers into buyers
 
-2. understand the customer as well as the competitive landscape, model target audiences, and optimize digital campaigns
++ understand the customer
+
++ model target audiences
+
++ optimize digital campaigns
+
++ what drives purchases and influences market share
+
++ do better at reaching, converting, upselling, retaining, and engaging customers
+
++ 사이트 내 흐름파악 및 진단
+
++ 잠재고객 타겟 맞춤 서비스 제공
+
++ 매출 트렌트 분석 및 예측
 
 ### 트렌트 예측이란? 
 
