@@ -21,8 +21,6 @@
 이것은 고객의 관점을 이해하고 마케팅 프로그램을 만드는 데 좀 더 robust한 insight를 제공함  
 *어떤 검색어 일 때, 고객이 유입되었고 그 검색어 일떄, 고객의 머무름 정도는 얼마나 되는지 파악이 가능 할까?*
 
-
-
 1.  search queries customers perform before they visited or converted
 
 1. converting consumers into buyers
@@ -31,17 +29,17 @@
 
 1. model target audiences
 
-+ optimize digital campaigns
+1. optimize digital campaigns
 
-+ what drives purchases and influences market share
+1. what drives purchases and influences market share
 
-+ do better at reaching, converting, upselling, retaining, and engaging customers
+1. do better at reaching, converting, upselling, retaining, and engaging customers
 
-+ 사이트 내 흐름파악 및 진단
+1. 사이트 내 흐름파악 및 진단
 
-+ 잠재고객 타겟 맞춤 서비스 제공
+1. 잠재고객 타겟 맞춤 서비스 제공
 
-+ 매출 트렌트 분석 및 예측
+1. 매출 트렌트 분석 및 예측
 
 ### 트렌트 예측이란? 
 
