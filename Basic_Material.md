@@ -12,9 +12,11 @@
 
 ### 온라인 행동 데이터로 할 수 있는 것은?
 
-1. Analyze the activity patterns of customers.  
-어떤 것을 클릭 하기 이전에 어떠한 행동이 있었고 무엇을 하였는지 파악 가능  
-이를 통해 고객이 website에서 바로 살지 아니면 reseller에세 살지 마트에서 살지 파악가능
+1. 고객의 행동 패턴 파악 가능   
+- 전환이 이루어지기 전에 어떠한 행동을 하였는지 파악  
+- 이러한 패턴을 통하여 고객을 묶을 수 있음  
+- 묶인 고객의 구입 트렌드는?
+
 
 1. Use search queries customers perform before they visited or converted, to analyze patterns of customers.  
 추가 데이터 수집을 통해 일반적인 검색어의 흐름과 이 웹사이트내 검색어의 흐름 비교가능 함  
