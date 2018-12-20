@@ -1,8 +1,20 @@
+# 용어 정리
+
+* Session - http://blog.socialmkt.co.kr/448
+
+
+
+
+
+
+
+
+
 # 분석의 주제 이해
 
 ### 분석의 목적은? 
 
-**온라인 행동** 기반 **트렌드 예측**
+**상품군 별 온라인 선호 지수** 기반 **수요 트렌드 예측**
 
 ### 온라인 행동이란? 
 
@@ -17,7 +29,6 @@
 - 이러한 패턴을 통하여 고객을 묶을 수 있음(최대한 다양한 요소를 이용)  
 - 묶인 고객의 구입 트렌드는?
 
-
 1. Use search queries customers perform before they visited or converted, to analyze patterns of customers.  
 추가 데이터 수집을 통해 일반적인 검색어의 흐름과 이 웹사이트내 검색어의 흐름 비교가능 함  
 이것은 고객의 관점을 이해하고 마케팅 프로그램을 만드는 데 좀 더 robust한 insight를 제공함  
@@ -27,21 +38,18 @@
 
 1. converting consumers into buyers
 
-1. understand the customer
-
-1. model target audiences
-
-1. optimize digital campaigns
-
-1. what drives purchases and influences market share
-
-1. do better at reaching, converting, upselling, retaining, and engaging customers
+1. optimize digital campaigns(reaching, converting, upselling, retaining, and engaging customers)
 
 1. 사이트 내 흐름파악 및 진단
 
 1. 잠재고객 타겟 맞춤 서비스 제공
 
 1. 매출 트렌트 분석 및 예측
+
+
+
+
+
 
 ### 트렌트 예측이란? 
 
