@@ -12,15 +12,24 @@
 
 ### 온라인 행동 데이터로 할 수 있는 것은?
 
-+ analyze the activity patterns of customers  
+1. Analyze the activity patterns of customers.  
 어떤 것을 클릭 하기 이전에 어떠한 행동이 있었고 무엇을 하였는지 파악 가능  
-이를 통해 고객이 website에서 바로 살지 아니면 reseller에세 살지 마트에서 살지 파악 
+이를 통해 고객이 website에서 바로 살지 아니면 reseller에세 살지 마트에서 살지 파악가능
 
-+ converting consumers into buyers
+1. Use search queries customers perform before they visited or converted, to analyze patterns of customers.  
+추가 데이터 수집을 통해 일반적인 검색어의 흐름과 이 웹사이트내 검색어의 흐름 비교가능 함  
+이것은 고객의 관점을 이해하고 마케팅 프로그램을 만드는 데 좀 더 robust한 insight를 제공함  
+*어떤 검색어 일 때, 고객이 유입되었고 그 검색어 일떄, 고객의 머무름 정도는 얼마나 되는지 파악이 가능 할까?*
 
-+ understand the customer
 
-+ model target audiences
+
+1.  search queries customers perform before they visited or converted
+
+1. converting consumers into buyers
+
+1. understand the customer
+
+1. model target audiences
 
 + optimize digital campaigns
 
@@ -106,6 +115,13 @@
 ### action clusters - 행동 분석에 따른 세분화, why 분석에 의한 대응
 
 ### 캠페인 코드 - 트래픽 추적 가능하게함 .
+
+# 가능한 추가 데이터 수집
+
++ market share data
+
+
+
 
 
 
