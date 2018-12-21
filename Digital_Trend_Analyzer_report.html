@@ -246,21 +246,123 @@ div.tocify {
 
 <div id="step-0---" class="section level1">
 <h1>Step 0 : 분석 환경 설정</h1>
-<pre class="r"><code>library(dplyr)
+<pre><code>## [1] &quot;C:/Project/GreenBand_Lpoint5/Source&quot;</code></pre>
+<pre class="r"><code>library(tidyverse) # Preprocessing, Visualizing
 
-library(ggplot2)
+library(knitr) # Tidy document
 
-library(ggrepel)
-
-library(readr)
-
-library(stringr)</code></pre>
+library(ggrepel) # ggplot tidy text</code></pre>
 </div>
 <div id="step-1-data-pre-processing" class="section level1">
 <h1>Step 1 : data pre-processing</h1>
 </div>
 <div id="step-2-eda" class="section level1">
 <h1>Step 2 : EDA</h1>
+<pre class="r"><code>summary(Product_original)</code></pre>
+<pre><code>##     CLNT_ID           SESS_ID            HITS_SEQ           PD_C       
+##  Min.   :     25   Min.   :      26   Min.   :  1.00   Min.   :     4  
+##  1st Qu.:1656017   1st Qu.: 3242700   1st Qu.: 24.00   1st Qu.:278909  
+##  Median :3337207   Median : 6019554   Median : 49.00   Median :513734  
+##  Mean   :3323788   Mean   : 5828583   Mean   : 79.52   Mean   :488052  
+##  3rd Qu.:4994410   3rd Qu.: 8428752   3rd Qu.:102.00   3rd Qu.:718836  
+##  Max.   :6592554   Max.   :10977899   Max.   :500.00   Max.   :847652  
+##   PD_ADD_NM          PD_BRA_NM          PD_BUY_AM        
+##  Length:1048575     Length:1048575     Length:1048575    
+##  Class :character   Class :character   Class :character  
+##  Mode  :character   Mode  :character   Mode  :character  
+##                                                          
+##                                                          
+##                                                          
+##   PD_BUY_CT        
+##  Length:1048575    
+##  Class :character  
+##  Mode  :character  
+##                    
+##                    
+## </code></pre>
+<pre class="r"><code>kable(head(Product_original), caption = 'Table1', align = 'c')</code></pre>
+<table>
+<caption>Table1</caption>
+<thead>
+<tr class="header">
+<th align="center">CLNT_ID</th>
+<th align="center">SESS_ID</th>
+<th align="center">HITS_SEQ</th>
+<th align="center">PD_C</th>
+<th align="center">PD_ADD_NM</th>
+<th align="center">PD_BRA_NM</th>
+<th align="center">PD_BUY_AM</th>
+<th align="center">PD_BUY_CT</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="center">4139680</td>
+<td align="center">7605037</td>
+<td align="center">12</td>
+<td align="center">642112</td>
+<td align="center">색상:워터멜론</td>
+<td align="center">[바비브라운]</td>
+<td align="center">39,000</td>
+<td align="center">1</td>
+</tr>
+<tr class="even">
+<td align="center">4140076</td>
+<td align="center">10189797</td>
+<td align="center">13</td>
+<td align="center">570603</td>
+<td align="center">색상:BLK0_(BLK0)BLACK|사이즈:120 / 2개</td>
+<td align="center">데상트</td>
+<td align="center">39,000</td>
+<td align="center">2</td>
+</tr>
+<tr class="odd">
+<td align="center">4142395</td>
+<td align="center">6158159</td>
+<td align="center">85</td>
+<td align="center">179538</td>
+<td align="center">(not set)</td>
+<td align="center">[아베다]</td>
+<td align="center">39,000</td>
+<td align="center">1</td>
+</tr>
+<tr class="even">
+<td align="center">4144914</td>
+<td align="center">7935714</td>
+<td align="center">12</td>
+<td align="center">554336</td>
+<td align="center">색상:블랙|사이즈:160cm(12~13세) / 1개</td>
+<td align="center">아디다스 키즈</td>
+<td align="center">39,000</td>
+<td align="center">1</td>
+</tr>
+<tr class="odd">
+<td align="center">4144917</td>
+<td align="center">6406509</td>
+<td align="center">78</td>
+<td align="center">190306</td>
+<td align="center">5개</td>
+<td align="center">데코르테</td>
+<td align="center">39,000</td>
+<td align="center">5</td>
+</tr>
+<tr class="even">
+<td align="center">4147643</td>
+<td align="center">4050743</td>
+<td align="center">66</td>
+<td align="center">149995</td>
+<td align="center">사이즈:옵션04.AN868_04 / 1개</td>
+<td align="center">앵글로매니아</td>
+<td align="center">39,000</td>
+<td align="center">1</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>PD_ADD_NM에 중복되는 내용이 존재<br />
+</li>
+<li>HITS_SEQ 가 1부터 시작한다고 했는데 1부터 시작하는게 확인 불가</li>
+</ul>
 </div>
 <div id="step-3-modeling" class="section level1">
 <h1>Step 3 : Modeling</h1>

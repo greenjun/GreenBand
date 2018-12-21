@@ -15,14 +15,6 @@ output:
 knitr::opts_chunk$set(echo = T, message = F, warning = F)
 ```
 
-
-
-
-
-
-
-
-
 # Step 0 : 분석 환경 설정
 
 ```{r, echo = F}
@@ -31,31 +23,75 @@ library(knitr)
 
 library(latexpdf)
 
+setwd("C:/Project/GreenBand_Lpoint5/Source/") ; getwd()
+
+load(file="Code/R/Digital_Trend_Analyzer.RData")
+
 ```
 
 ```{r}
 
-library(dplyr)
+library(tidyverse) # Preprocessing, Visualizing
 
-library(ggplot2)
+library(knitr) # Tidy document
 
-library(ggrepel)
-
-library(readr)
-
-library(stringr)
+library(ggrepel) # ggplot tidy text
 
 ```
 
 # Step 1 : data pre-processing
 
+
 # Step 2 : EDA
+
+```{r}
+
+summary(Product_original)
+
+kable(head(Product_original), caption = 'Table1', align = 'c')
+
+```
+
+
+
+
+
+
+
+
 
 # Step 3 : Modeling
 
 # Step 4 : Insight
 
 # Step 5 : Proposal for New Service
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+```{r}
+
+
+```
 
 
 ```{r, fig.cap = "Image1"}
