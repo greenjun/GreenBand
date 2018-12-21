@@ -44,21 +44,6 @@ library(ggrepel) # ggplot tidy text
 
 # Step 2 : EDA
 
-```{r}
-
-summary(Product_original)
-
-kable(head(Product_original), caption = 'Table1', align = 'c')
-
-```
-
-
-
-
-
-
-
-
 
 # Step 3 : Modeling
 
