@@ -3,18 +3,17 @@
 * Session - http://blog.socialmkt.co.kr/448
 
 
-
-
-
-
-
-
-
 # 분석의 주제 이해
 
 ### 분석의 목적은? 
 
-**상품군 별 온라인 선호 지수** 기반 **수요 트렌드 예측**
+**주요 상품군별 온라인 선호지수 생성**
+
+**상품군별 수요 트렌드 예측 및 인사이트 도출**
+
+**위를 활용한 신규 서비스 제안**
+
+**논리 전개의 타당성', '제안 서비스의 창의성'을 고려**
 
 ### 온라인 행동이란? 
 
@@ -25,20 +24,10 @@
 ### 온라인 행동 데이터로 할 수 있는 것은?
 
 1. 고객의 행동 패턴 파악 가능   
-- 전환이 이루어지기 전에 어떠한 행동을 하였는지 파악  
-- 이러한 패턴을 통하여 고객을 묶을 수 있음(최대한 다양한 요소를 이용)  
-- 묶인 고객의 구입 트렌드는?
-
-1. Use search queries customers perform before they visited or converted, to analyze patterns of customers.  
-추가 데이터 수집을 통해 일반적인 검색어의 흐름과 이 웹사이트내 검색어의 흐름 비교가능 함  
-이것은 고객의 관점을 이해하고 마케팅 프로그램을 만드는 데 좀 더 robust한 insight를 제공함  
-*어떤 검색어 일 때, 고객이 유입되었고 그 검색어 일떄, 고객의 머무름 정도는 얼마나 되는지 파악이 가능 할까?*
-
-1.  search queries customers perform before they visited or converted
-
-1. converting consumers into buyers
-
-1. optimize digital campaigns(reaching, converting, upselling, retaining, and engaging customers)
+- 전환이 이루어지기 전에 어떠한 행동을 하였는지 파악 (검색 등)    
+- 이러한 패턴을 통하여 고객을 묶을 수 있음(최대한 다양한 요소를 이용, 체류시간, 경로 등등)  
+- 묶인 고객의 구입 트렌드는? 패턴을 이용하여 구매자로 전환 할 수 있을까? 패턴을 이용하여 마케팅 전략으로 이용가능할까?(reaching, converting, upselling, retaining, and engaging customers)  
+- 추가 데이터 수집을 통해 일반적인 검색어의 흐름과 이 웹사이트내 검색어의 흐름 비교가능 함     
 
 1. 사이트 내 흐름파악 및 진단
 
@@ -46,14 +35,9 @@
 
 1. 매출 트렌트 분석 및 예측
 
+### 주요상품군이란?
 
-
-
-
-
-### 트렌트 예측이란? 
-
-수요 예측을 말하는 거 같음. 
+주요상품군이란 다른 제품군과 비교하여 많이 팔리는 제품군, 예를 들어 
 
 ### 왜 이러한 분석이 필요 했는가? 
 
