@@ -32,6 +32,9 @@ load(file="Code/R/tr_Digital_Trend_Analyzer.RData")
 
 load(file="Code/R/Integrated_Product.RData")
 
+load(file="Code/R/freq_index_material.RData")
+
+
 #=====================================================================================================================
 # Step 1 : 분석 데이터 호출
 #===================================================================================================================== 
@@ -87,7 +90,7 @@ save.image("C:/Project/GreenBand_Lpoint5/Source/Code/R/online_preference_index_d
 load(file="Code/R/Digital_Trend_Analyzer.RData")
 
 #=====================================================================================================================
-# Step 2 : 데이터 전처리-1, 데이터 타입 처리, 이상치 처리 
+# Step 2 : 데이터 전처리, 데이터 타입 처리, 이상치 처리, 데이터 통합
 #=====================================================================================================================
 
 summary(Product_original) ; str(Product_original) ; View(Product_original) ; sapply(Product_original, function(x){sum(is.na(x))})
@@ -202,8 +205,39 @@ rm(list = c('Custom_original','Master_original','Product_original','Search1_orig
 
 save.image("C:/Project/GreenBand_Lpoint5/Source/Code/R/tr_Digital_Trend_Analyzer.RData")
 
+## Integrated Product
+
+Integrated_Product <-tr_Product_original %>%
+  
+  left_join(tr_Master_original, c('PD_C')) %>%
+  
+  left_join(tr_Custom_original, c('CLNT_ID')) %>%
+  
+  left_join(tr_Search1_original, c('CLNT_ID','SESS_ID')) %>%
+  
+  left_join(tr_Session_original, c('CLNT_ID','SESS_ID')) %>%
+  
+  select(CLNT_ID,
+         SESS_ID, SESS_SEQ, SESS_DT, TOT_PAG_VIEW_CT, TOT_SESS_HR_V,
+         KWD_NM, SEARCH_CNT,
+         CLAC1_NM, CLAC2_NM, CLAC3_NM,
+         HITS_SEQ, 
+         PD_BUY_CT, PD_BUY_AM,
+         CLNT_GENDER, CLNT_AGE, ZON_NM, CITY_NM, DVC_CTG_NM,
+         PD_BRA_NM, PD_NM, PD_ADD_NM, PD_C) %>%
+  
+  mutate(CLAC1_NM = as.factor(CLAC1_NM),
+         CLAC2_NM = as.factor(CLAC2_NM),
+         CLAC3_NM = as.factor(CLAC3_NM)) %>%
+  
+  arrange(CLNT_ID, SESS_SEQ, SESS_DT)
+
+## save RData
+
+save(Integrated_Product, file = "C:/Project/GreenBand_Lpoint5/Source/Code/R/Integrated_Product.RData")
+
 #=====================================================================================================================
-# Step 3 : 탐색적 데이터 분석-1
+# Step 3 : 탐색적 데이터 분석
 #=====================================================================================================================
 
 as.Date("2018-09-30") - as.Date("2018-04-01") + 1
@@ -239,6 +273,10 @@ tr_Product_original %>%
   ggplot(aes(x=HITS_SEQ, fill = HITS_SEQ)) +
   
   geom_bar()
+
+############################# tr_Master_original #############################
+
+summary(tr_Master_original) ; str(tr_Master_original) ; View(tr_Master_original) ; sapply(tr_Master_original, function(x){sum(is.na(x))})
 
 ############################# tr_Product_original + tr_Master_original + tr_Search1_original #############################
 
@@ -295,32 +333,6 @@ View(
 # 처리) 추후에 SEARCH_CNT 처리 할 때, 한 사람이 여러번 검색한 것은 1로 처리
 # ans) 선호도를 파악 할 때, 한사람이 해당 상품에 가지고 있는 흥미도는 여러번 검색을 했다는 것으로 다른 상품군에 비해 흥미도가 높다고 
 # 파악이 가능하지만, 수 많은 사람들을 대상으로 해당 상품에 대한 흥미도를 고려할때는 한 사람을 1로 처리하는 것이 타당해보인다. 
-
-############################# tr_Session_original  #############################
-
-summary(tr_Session_original) ; str(tr_Session_original) ; View(tr_Session_original) ; sapply(tr_Session_original, function(x){sum(is.na(x))})
-
-View(
-  tr_Session_original %>%
-    
-    arrange(CLNT_ID, SESS_SEQ)
-)
-
-View(
-  tr_Session_original %>%
-    
-    arrange(CLNT_ID, SESS_SEQ) %>%
-    
-    left_join(tr_Product_original, c('CLNT_ID','SESS_ID'))
-)
-
-# NA의 이유? 
-
-# ans) 
-
-
-
-
 
 ############################# tr_Product_original + tr_Master_original + tr_Search1_original + tr_Session_original #############################
 
@@ -408,132 +420,201 @@ View(
     head(1000)
 )
 
+############################# tr_Session_original  #############################
 
+summary(tr_Session_original) ; str(tr_Session_original) ; View(tr_Session_original) ; sapply(tr_Session_original, function(x){sum(is.na(x))})
 
+View(
+  tr_Session_original %>%
+    
+    arrange(CLNT_ID, SESS_SEQ)
+)
 
+View(
+  tr_Product_original %>%
+    
+    left_join(tr_Session_original, c('CLNT_ID','SESS_ID')) %>%
+    
+    arrange(CLNT_ID, SESS_SEQ)
+)
 
+# TOT_PAG_VIEW_CT
 
-############################## tr_Custom_original #############################
-
-summary(tr_Custom_original) ; str(tr_Custom_original) ; View(tr_Custom_original)
-
-# 상품을 구매하는 고객의 나이와 성별 분포 
-
-ggplot(tr_Custom_original, aes(x = CLNT_AGE, fill = CLNT_GENDER)) +
+tr_Session_original %>%
   
-  geom_bar(stat='count', position='dodge') +
+  group_by(TOT_PAG_VIEW_CT) %>%
   
-  geom_label_repel(stat='count', aes(label=..count..)) +
+  count() %>%
   
-  ggtitle("사이트 접속 고객 나이대별 성별 분포") + 
+  ggplot(aes(x = TOT_PAG_VIEW_CT, y = n)) +
+  
+  geom_col(aes(fill = n)) +
+  
+  labs(x = "",
+       y = "Count",
+       title = "총 페이지 조회건수",
+       subtitle = "",
+       caption = "") +
   
   theme(plot.title = element_text(family = "serif", face = "bold", hjust = 0.5, size = 15),
         axis.text.x  = element_text(angle=45, hjust=1, vjust=0.9),
         axis.text.y = element_blank())
 
-############################# tr_Product_original + tr_Custom_original #############################
+# TOT_SESS_HR_V
 
-tr_Product_Customer_original <- left_join(tr_Product_original, tr_Custom_original, c('CLNT_ID'))
+tr_Session_original %>%
+  
+  group_by(TOT_SESS_HR_V) %>%
+  
+  count() %>%
+  
+  ggplot(aes(x = TOT_SESS_HR_V, y = n)) +
+  
+  geom_col(aes(fill = n)) +
 
-summary(tr_Product_Customer_original) ; str(tr_Product_Customer_original) ; View(tr_Product_Customer_original) ; sapply(tr_Product_Customer_original, function(x){sum(is.na(x))})
+  labs(x = "",
+       y = "Count",
+       title = "총 세션 시간 값",
+       subtitle = "",
+       caption = "") +
+  
+  theme(plot.title = element_text(family = "serif", face = "bold", hjust = 0.5, size = 15),
+        axis.text.x  = element_text(angle=45, hjust=1, vjust=0.9),
+        axis.text.y = element_blank())
 
-View(
-  tr_Product_Customer_original %>%
-    arrange(CLNT_ID)
-)
+## TOT_PAG_VIEW_CT, TOT_SESS_HR_V 의 상관 관계
 
-# tr_Product_original의  NA는 방문자의 상품 구매 정보인데, 성별 연령 정보는 있지만 구매이력이 남지 않음. why?
+plot(tr_Session_original$TOT_PAG_VIEW_CT, tr_Session_original$TOT_SESS_HR_V)
 
-# tr_Custom_original의 NA는 상품 구매자이지만 미상정보제외로, 상품 구매이력만이 남은 경우 
+cor.test(tr_Session_original$TOT_PAG_VIEW_CT, tr_Session_original$TOT_SESS_HR_V, method = 'pearson')
 
-# 나이와 성별로 선호하는 상품군을 파악 가능 
+# the Orthogonalized Quadrant Correlation estimator
+
+data.frame(tr_Session_original$TOT_PAG_VIEW_CT, tr_Session_original$TOT_SESS_HR_V) %>%
+  
+  covRob(corr = T) 
+
+############################## tr_Custom_original #############################
+
+summary(tr_Custom_original) ; str(tr_Custom_original) ; View(tr_Custom_original) ; sapply(tr_Custom_original, function(x){sum(is.na(x))})
+
+# 상품을 구매하는 고객의 나이와 성별 분포 
+
+p1 <- tr_Custom_original %>%
+  
+  group_by(CLNT_AGE,CLNT_GENDER) %>%
+  
+  count() %>%
+  
+  ggplot(aes(x = CLNT_AGE, y = n, fill = CLNT_GENDER)) +
+  
+  geom_col(position = 'dodge') +
+
+  labs(x = "Age",
+       y = "Count",
+       title = "상품을 구매한 방문자의 나이대별 성별 분포",
+       subtitle = "",
+       caption = "") +
+  
+  theme(plot.title = element_text(family = "serif", face = "bold", hjust = 0.5, size = 15),
+        axis.text.x  = element_text(angle=45, hjust=1, vjust=0.9),
+        legend.position = 'none')
+
+############################## tr_Product_original + tr_Master_original + tr_Custom_original #############################
+
+tr_product_Master_Custom_original <-  tr_Product_original %>%
+  
+  left_join(tr_Master_original, c('PD_C')) %>%
+  
+  left_join(tr_Custom_original, c('CLNT_ID'))
+  
+summary(tr_product_Master_Custom_original) ; str(tr_product_Master_Custom_original) ; View(tr_product_Master_Custom_original) ; sapply(tr_product_Master_Custom_original, function(x){sum(is.na(x))})
 
 
-############################# tr_Product_original + tr_Session_original #############################
+# 어느 나잇대 성별이 가장 돈이 될까? (추후 이익률을 고려)
+# ans) 30대 여성, 40대 여성, 20대 여성, 40대 남성, 50대 여성 순 ..
 
-tr_Product_Session_original <- full_join(tr_Product_original, tr_Session_original, c('CLNT_ID','SESS_ID'))
-
-summary(tr_Product_Session_original) ; str(tr_Product_Session_original) ; View(tr_Product_Session_original) ; sapply(tr_Product_Session_original, function(x){sum(is.na(x))})
-
-View(
-  tr_Product_Session_original %>%
-    arrange(CLNT_ID)
-)
-
-# tr_Product_original의  NA는 방문자의 상품 구매 정보인데, 세션 정보는 있지만 구매이력이 남지 않음. why?
-
-# tr_Session_original의 NA는 상품 구매자이지만 미상정보제외로, 상품 구매이력만이 남은 경우 
-
-############################# tr_Master_original #############################
-
-summary(tr_Master_original) ; str(tr_Master_original) ; View(tr_Master_original) ; sapply(tr_Master_original, function(x){sum(is.na(x))})
-
-############################# tr_Product_original + tr_Master_original #############################
-
-tr_Product_Master_original <- left_join(tr_Product_original, tr_Master_original, c('PD_C'))
-
-summary(tr_Product_Master_original) ; str(tr_Product_Master_original) ; View(tr_Product_Master_original) ; sapply(tr_Product_Master_original, function(x){sum(is.na(x))})
-
-# 상품 부가 정보에는 색과 크기가 포함, 상품군별 선호지수를 파악하는데 큰 도움이 안될꺼같음. 
-
-# ? 색 추출을 통해 선호하는 색의 변화를 보는게 가능할까
-
-#=====================================================================================================================
-# Step 4 : 데이터 전처리-2
-#=====================================================================================================================
-
-## Integrated Product
-
-Integrated_Product <-tr_Product_original %>%
+p2 <- tr_Product_original %>%
   
   left_join(tr_Master_original, c('PD_C')) %>%
   
   left_join(tr_Custom_original, c('CLNT_ID')) %>%
   
-  left_join(tr_Search1_original, c('CLNT_ID','SESS_ID')) %>%
+  filter(!is.na(CLNT_GENDER)) %>%
   
-  left_join(tr_Session_original, c('CLNT_ID','SESS_ID')) %>%
+  group_by(CLNT_AGE, CLNT_GENDER) %>%
   
-  select(CLNT_ID,
-         SESS_ID, SESS_SEQ, SESS_DT, TOT_PAG_VIEW_CT, TOT_SESS_HR_V,
-         KWD_NM, SEARCH_CNT,
-         CLAC1_NM, CLAC2_NM, CLAC3_NM,
-         HITS_SEQ, 
-         PD_BUY_CT, PD_BUY_AM,
-         CLNT_GENDER, CLNT_AGE, ZON_NM, CITY_NM, DVC_CTG_NM,
-         PD_BRA_NM, PD_NM, PD_ADD_NM, PD_C) %>%
+  summarise(money = sum(PD_BUY_AM * PD_BUY_CT)) %>%
   
-  mutate(CLAC1_NM = as.factor(CLAC1_NM),
-         CLAC2_NM = as.factor(CLAC2_NM),
-         CLAC3_NM = as.factor(CLAC3_NM)) %>%
+  arrange(desc(money)) %>%
   
-  arrange(CLNT_ID, SESS_SEQ, SESS_DT)
+  ggplot(aes(x = CLNT_AGE, y = money)) +
+  
+  geom_col(aes(fill = CLNT_GENDER), position = 'dodge') +
 
-## save RData
+  labs(x = "Age",
+       y = "Total sales amount",
+       title = "판매액이 가장 많은 집단",
+       subtitle = "",
+       caption = "") +
+  
+  theme(plot.title = element_text(family = "serif", face = "bold", hjust = 0.5, size = 15),
+        axis.text.x  = element_text(angle=45, hjust=1, vjust=0.9),
+        legend.position = 'none')
 
-save(Integrated_Product, file = "C:/Project/GreenBand_Lpoint5/Source/Code/R/Integrated_Product.RData")
+# CUSTOM 정보 누락자 판매액
+# ans) 5,859,143,869
 
-## load RData
+tr_Product_original %>%
+  
+  left_join(tr_Master_original, c('PD_C')) %>%
+  
+  left_join(tr_Custom_original, c('CLNT_ID')) %>%
+  
+  filter(is.na(CLNT_GENDER)) %>%
+  
+  summarise(money = sum(PD_BUY_AM * PD_BUY_CT))
 
-load(file="Code/R/Integrated_Product.RData")
+# 방문자/판매액 비율
 
-#=====================================================================================================================
-# Step 3 : 탐색적 데이터 분석-2 
-#=====================================================================================================================
+p3 <- tr_Custom_original %>%
+  
+  group_by(CLNT_AGE,CLNT_GENDER) %>%
+  
+  count() %>%
+  
+  full_join(tr_Product_original %>%
+              
+              left_join(tr_Master_original, c('PD_C')) %>%
+              
+              left_join(tr_Custom_original, c('CLNT_ID')) %>%
+              
+              filter(!is.na(CLNT_GENDER)) %>%
+              
+              group_by(CLNT_AGE, CLNT_GENDER) %>%
+              
+              summarise(money = sum(PD_BUY_AM * PD_BUY_CT)), c('CLNT_AGE','CLNT_GENDER')) %>%
+  
+  mutate(Sales_to_visitors = money/n) %>%
+  
+  ggplot(aes(x = CLNT_AGE, y = Sales_to_visitors)) +
+  
+  geom_col(aes(fill = CLNT_GENDER), position = 'dodge') +
+  
+  labs(x = "Age",
+       y = "Sales_to_visitors",
+       title = "나이대별 방문자 당 판매액",
+       subtitle = "",
+       caption = "") +
+  
+  theme(plot.title = element_text(family = "serif", face = "bold", hjust = 0.5, size = 15),
+        axis.text.x  = element_text(angle=45, hjust=1, vjust=0.9))
 
-summary(Integrated_Product) ; str(Integrated_Product) ; View(Integrated_Product) ; sapply(Integrated_Product, function(x){sum(is.na(x))})
+layout <- matrix(c(1,1,2,2,3,3,
+                   1,1,2,2,3,3),
+                 2,6,byrow=TRUE)
 
-## TOT_PAG_VIEW_CT, TOT_SESS_HR_V 의 상관 관계
-
-plot(Integrated_Product$TOT_PAG_VIEW_CT, Integrated_Product$TOT_SESS_HR_V)
-
-# the Orthogonalized Quadrant Correlation estimator
-
-data.frame(Integrated_Product$TOT_PAG_VIEW_CT, Integrated_Product$TOT_SESS_HR_V) %>%
-  filter(!is.na(Integrated_Product$TOT_PAG_VIEW_CT) & !is.na(Integrated_Product$TOT_SESS_HR_V)) %>%
-  covRob(corr = T) 
-
-cor.test(Integrated_Product$TOT_PAG_VIEW_CT, Integrated_Product$TOT_SESS_HR_V, method = 'pearson')
+multiplot(p1, p2, p3, layout=layout)
 
 # 어느 상품군이 가장 돈이 될까?
 
@@ -553,9 +634,11 @@ CLAC1_NM_top10_plot <- tr_Product_original %>%
   
   geom_col(aes(fill = CLAC1_NM), position = 'dodge') +
   
-  ggtitle("CLAC1 수익이 가장 많이 나는  상품군") + 
-  
-  labs(x = "", y = "") +
+  labs(x = "",
+       y = "",
+       title = "CLAC1 수익이 가장 많이 나는  상품군",
+       subtitle = "",
+       caption = "")  +
   
   theme(plot.title = element_text(family = "serif", face = "bold", hjust = 0.5, size = 15),
         axis.text.x  = element_text(angle=45, hjust=1, vjust=0.9),
@@ -577,9 +660,11 @@ CLAC2_NM_top15_plot <- tr_Product_original %>%
   
   geom_col(aes(fill = CLAC2_NM), position = 'dodge') +
   
-  ggtitle("CLAC2 수익이 가장 많이 나는  상품군") + 
-  
-  labs(x = "", y = "") +
+  labs(x = "",
+       y = "",
+       title = "CLAC2 수익이 가장 많이 나는  상품군",
+       subtitle = "",
+       caption = "")  +
   
   theme(plot.title = element_text(family = "serif", face = "bold", hjust = 0.5, size = 15),
         axis.text.x  = element_text(angle=45, hjust=1, vjust=0.9),
@@ -601,142 +686,138 @@ CLAC3_NM_top20_plot <- tr_Product_original %>%
   
   geom_col(aes(fill = CLAC3_NM), position = 'dodge') +
   
-  ggtitle("CLAC3 수익이 가장 많이 나는  상품군") + 
-  
-  labs(x = "", y = "") +
+  labs(x = "",
+       y = "",
+       title = "CLAC3 수익이 가장 많이 나는  상품군",
+       subtitle = "",
+       caption = "")  +
   
   theme(plot.title = element_text(family = "serif", face = "bold", hjust = 0.5, size = 15),
         axis.text.x  = element_text(angle=45, hjust=1, vjust=0.9),
         legend.position = 'none')
 
-CLAC1_NM_top10_plot
+layout <- matrix(c(1,1,2,2,3,3,
+                   1,1,2,2,3,3),
+                 2,6,byrow=TRUE)
 
-CLAC2_NM_top15_plot
-
-CLAC3_NM_top20_plot
+multiplot(CLAC1_NM_top10_plot, CLAC2_NM_top15_plot, CLAC3_NM_top20_plot, layout=layout)
 
 ggplotly(
-tr_Product_original %>%
-  
-  left_join(tr_Master_original, c('PD_C')) %>%
-  
-  filter(CLAC2_NM %in% c(tr_Product_original %>%
-                           
-                           left_join(tr_Master_original, c('PD_C')) %>%
-                           
-                           group_by(CLAC2_NM) %>%
-                           
-                           summarise(money = sum(PD_BUY_AM * PD_BUY_CT)) %>%
-                           
-                           arrange(desc(money)) %>%
-                           
-                           top_n(10, money) %>% 
-                           
-                           select(CLAC2_NM) %>%
-                           
-                           simplify())) %>%
-  
-  group_by(CLAC2_NM, CLAC3_NM) %>%
-  
-  summarise(money = sum(PD_BUY_AM * PD_BUY_CT))  %>%
-  
-  ggplot(aes(x = reorder(CLAC2_NM, money, FUN = max), y = money)) +
-  
-  geom_col(aes(fill = reorder(CLAC3_NM, money, FUN = max)), position = 'stack') +
-  
-  ggtitle("CLAC2 수익이 가장 많이 나는  상품군") + 
-  
-  labs(x = "", y = "") +
-  
-  theme(plot.title = element_text(family = "serif", face = "bold", hjust = 0.5, size = 15),
-        axis.text.x  = element_text(angle=45, hjust=1, vjust=0.9),
-        legend.position = 'none')
+  tr_Product_original %>%
+    
+    left_join(tr_Master_original, c('PD_C')) %>%
+    
+    filter(CLAC2_NM %in% c(tr_Product_original %>%
+                             
+                             left_join(tr_Master_original, c('PD_C')) %>%
+                             
+                             group_by(CLAC2_NM) %>%
+                             
+                             summarise(money = sum(PD_BUY_AM * PD_BUY_CT)) %>%
+                             
+                             arrange(desc(money)) %>%
+                             
+                             top_n(10, money) %>% 
+                             
+                             select(CLAC2_NM) %>%
+                             
+                             simplify())) %>%
+    
+    group_by(CLAC2_NM, CLAC3_NM) %>%
+    
+    summarise(money = sum(PD_BUY_AM * PD_BUY_CT))  %>%
+    
+    ggplot(aes(x = reorder(CLAC2_NM, money, FUN = max), y = money)) +
+    
+    geom_col(aes(fill = reorder(CLAC3_NM, money, FUN = max)), position = 'stack') +
+    
+    labs(x = "",
+         y = "",
+         title = "CLAC2 수익이 가장 많이 나는  상품군",
+         subtitle = "",
+         caption = "") +
+    
+    theme(plot.title = element_text(family = "serif", face = "bold", hjust = 0.5, size = 15),
+          axis.text.x  = element_text(angle=45, hjust=1, vjust=0.9),
+          legend.position = 'none')
 )
 
-# 어느 나잇대 성별이 가장 돈이 될까? (추후 이익률을 고려)
-# ans) 30대 여성, 40대 여성, 20대 여성, 40대 남성, 50대 여성 순 ..
+# CLAC2 성별 나잇대별 구입 상품군
 
-tr_Product_original %>%
+CLAC2_NM_F <- list()
+for(i in seq(10,80,10)){
   
-  left_join(tr_Master_original, c('PD_C')) %>%
+  CLAC2_NM_F[[i/10]] <- tr_Product_original %>%
+    
+    left_join(tr_Master_original, c('PD_C')) %>%
+    
+    left_join(tr_Custom_original, c('CLNT_ID')) %>%
+    
+    filter(!is.na(CLNT_GENDER) & CLNT_GENDER == 'F' & CLNT_AGE == paste0(i)) %>%
+    
+    group_by(CLAC2_NM) %>%
+    
+    summarise(money = sum(PD_BUY_AM * PD_BUY_CT)) %>%
+    
+    top_n(15, money) %>%
+    
+    arrange(desc(money)) %>%
+    
+    ggplot(aes(x = reorder(CLAC2_NM, money, FUN = max), y = money)) +
+    
+    geom_col(aes(fill = CLAC2_NM), position = 'dodge') +
+    
+    labs(x = "",
+         y = "",
+         title = paste0("CLAC2"," ",i,"대 여성의 구입 상품군"),
+         subtitle = "",
+         caption = "")+
+    
+    theme(plot.title = element_text(family = "serif", face = "bold", hjust = 0.5, size = 15),
+          axis.text.x  = element_text(angle=45, hjust=1, vjust=0.9),
+          legend.position = 'none')
   
-  left_join(tr_Custom_original, c('CLNT_ID')) %>%
-  
-  filter(!is.na(CLNT_GENDER)) %>%
-  
-  group_by(CLNT_AGE, CLNT_GENDER) %>%
-  
-  summarise(money = sum(PD_BUY_AM * PD_BUY_CT)) %>%
-  
-  arrange(desc(money)) %>%
-  
-  ggplot(aes(x = reorder(CLNT_AGE, money, FUN = max), y = money)) +
-  
-  geom_col(aes(fill = CLNT_GENDER), position = 'dodge') +
-  
-  ggtitle("판매액이 가장 많은 집단") + 
-  
-  labs(x = "", y = "") +
-  
-  theme(plot.title = element_text(family = "serif", face = "bold", hjust = 0.5, size = 15),
-        axis.text.x  = element_text(angle=45, hjust=1, vjust=0.9))
-
-# CUSTOM 정보 누락자 판매액
-# ans) 5,859,143,869
-
-tr_Product_original %>%
-  
-  left_join(tr_Master_original, c('PD_C')) %>%
-  
-  left_join(tr_Custom_original, c('CLNT_ID')) %>%
-  
-  filter(is.na(CLNT_GENDER)) %>%
-  
-  summarise(money = sum(PD_BUY_AM * PD_BUY_CT))
+  }
+CLAC2_NM_F[[1]]
 
 
+CLAC2_NM_M <- list()
+for(i in seq(10,80,10)){
+  
+  CLAC2_NM_M[[i/10]] <- tr_Product_original %>%
+    
+    left_join(tr_Master_original, c('PD_C')) %>%
+    
+    left_join(tr_Custom_original, c('CLNT_ID')) %>%
+    
+    filter(!is.na(CLNT_GENDER) & CLNT_GENDER == 'M' & CLNT_AGE == paste0(i)) %>%
+    
+    group_by(CLAC2_NM) %>%
+    
+    summarise(money = sum(PD_BUY_AM * PD_BUY_CT)) %>%
+    
+    top_n(15, money) %>%
+    
+    arrange(desc(money)) %>%
+    
+    ggplot(aes(x = reorder(CLAC2_NM, money, FUN = max), y = money)) +
+    
+    geom_col(aes(fill = CLAC2_NM), position = 'dodge') +
+    
+    labs(x = "",
+         y = "",
+         title = paste0("CLAC2"," ",i,"대 남성의 구입 상품군"),
+         subtitle = "",
+         caption = "") +
+    
+    theme(plot.title = element_text(family = "serif", face = "bold", hjust = 0.5, size = 15),
+          axis.text.x  = element_text(angle=45, hjust=1, vjust=0.9),
+          legend.position = 'none')
+  
+}
+CLAC2_NM_M[[1]]
 
-k <- list()
-k[[1]] <- c(4,5,6)
-k
-# 30대 여성의 구입 상품군
-
-CLAC2_NM_top15_F_30_plot <- tr_Product_original %>%
-  
-  left_join(tr_Master_original, c('PD_C')) %>%
-  
-  left_join(tr_Custom_original, c('CLNT_ID')) %>%
-  
-  filter(!is.na(CLNT_GENDER) & CLNT_GENDER == 'F' & CLNT_AGE == '30') %>%
-  
-  group_by(CLAC2_NM) %>%
-  
-  summarise(money = sum(PD_BUY_AM * PD_BUY_CT)) %>%
-  
-  top_n(15, money) %>%
-  
-  arrange(desc(money)) %>%
-  
-  ggplot(aes(x = reorder(CLAC2_NM, money, FUN = max), y = money)) +
-  
-  geom_col(aes(fill = CLAC2_NM), position = 'dodge') +
-  
-  ggtitle("CLAC2 30대 여성의 구입 상품군") + 
-  
-  labs(x = "", y = "") +
-  
-  theme(plot.title = element_text(family = "serif", face = "bold", hjust = 0.5, size = 15),
-        axis.text.x  = element_text(angle=45, hjust=1, vjust=0.9),
-        legend.position = 'none')
-
-
-
-
-
-
-
-
-## 나이와 성별로 선호하는 상품군을 파악 가능 
+## 선호하는 상품군을 남성과 여성으로 같이 비교
 
 p1 <- tr_Product_original %>%
   
@@ -750,7 +831,7 @@ p1 <- tr_Product_original %>%
   
   count() %>%
   
-  ggplot(aes(x = reorder(CLAC1_NM, n, FUN = min), y = n)) +
+  ggplot(aes(x = reorder(CLAC1_NM, n, FUN = max), y = n)) +
   
   geom_col(aes(fill = CLNT_GENDER), position='stack') +
   
@@ -758,12 +839,15 @@ p1 <- tr_Product_original %>%
   
   coord_flip() +
   
-  ggtitle("성별 나이별 상품군") + 
-  
-  labs(x = "", y = "") +
+  labs(x = "",
+       y = "",
+       title = "성별 나이별 상품군",
+       subtitle = "",
+       caption = "") + 
   
   theme(plot.title = element_text(family = "serif", face = "bold", hjust = 0.5, size = 15),
-        axis.text.x  = element_text(angle=45, hjust=1, vjust=0.9))
+        axis.text.x  = element_text(angle=45, hjust=1, vjust=0.9),
+        legend.position = 'none')
 
 age_plot <- list()
 for(i in seq(10,80,10)){
@@ -780,7 +864,7 @@ for(i in seq(10,80,10)){
     
     count() %>%
     
-    ggplot(aes(x = reorder(CLAC1_NM, n, FUN = min), y = n)) +
+    ggplot(aes(x = reorder(CLAC1_NM, n, FUN = max), y = n)) +
    
     geom_col(aes(fill = CLNT_GENDER), position='stack') +
     
@@ -788,9 +872,11 @@ for(i in seq(10,80,10)){
       
     coord_flip() +
     
-    ggtitle(paste0(i, "대 성별 선호하는 상품군")) + 
-    
-    labs(x = "", y = "") +
+    labs(x = "",
+         y = "",
+         title = paste0(i, "대 성별 선호하는 상품군"),
+         subtitle = "",
+         caption = "") +
     
     theme(plot.title = element_text(family = "serif", face = "bold", hjust = 0.5, size = 15),
           axis.text.x  = element_text(angle=45, hjust=1, vjust=0.9))
@@ -800,13 +886,19 @@ layout <- matrix(c(1,1,2,2,
                    1,1,2,2),
                  2,4,byrow=TRUE)
 
-multiplot(p1, age_plot[[3]], layout=layout)
+multiplot(p1, age_plot[[2]], layout=layout)
 
 # 미상 정보의 결측치를 채워보려고 하였으나 남성이라는 키워드가 들어가는 쪽에보면 오히려 여성의 구매빈도가 높다 따라서 키워드를 기준으로 미상정보를 채우는 것은 타탕해보이지 않는다. 
 
-## 30대 여성의 지역을 고려해보자, 좌표 데이터 추가 
+## 좌표 데이터 추가 
 
-load(file="Code/R/tr_Product_Master_Custom_Session_original.RData")
+tr_Product_Master_Custom_Session_original <- tr_Product_original %>%
+  
+  left_join(tr_Master_original, c('PD_C')) %>% 
+  
+  left_join(tr_Custom_original, c('CLNT_ID')) %>% 
+  
+  left_join(tr_Session_original, c('CLNT_ID','SESS_ID'))
 
 ZON_NM_lat_long <- read.csv("Data/ZON_NM_lat_long.csv", header = T, encoding = "UTF-8")
 
@@ -814,9 +906,11 @@ ZON_NM_lat_long$CITY_NM <- as.character(ZON_NM_lat_long$CITY_NM)
 
 tr_Product_Master_Custom_Session_original$CITY_NM <- as.character(tr_Product_Master_Custom_Session_original$CITY_NM)
 
-mapping_data  <- tr_Product_Master_Custom_Session_original %>%
+# mapping_data_all + CLAC_1
+
+mapping_data_all  <- tr_Product_Master_Custom_Session_original %>%
   
-  filter(!is.na(CITY_NM) & !is.na(CLNT_GENDER)  & CLNT_GENDER=='F' & CLNT_AGE=='30') %>%
+  filter(!is.na(CITY_NM) & !is.na(CLNT_GENDER)) %>%
   
   group_by(CITY_NM, CLAC1_NM) %>%
   
@@ -825,10 +919,8 @@ mapping_data  <- tr_Product_Master_Custom_Session_original %>%
   left_join(ZON_NM_lat_long, c('CITY_NM')) %>%
   
   filter(!is.na(latitude))
-  
-# 지역별 상위 5개 물품 
 
-mapping_data %>% 
+mapping_data_all_top5 <- mapping_data_all %>% 
   
   arrange(CITY_NM, desc(n)) %>%
   
@@ -838,11 +930,9 @@ mapping_data %>%
   
   top_n(5, n)
 
-# 지도 
+factpal <- colorFactor(topo.colors(5), mapping_data_all$CLAC1_NM)
 
-factpal <- colorFactor(topo.colors(5), mapping_data$CLAC1_NM)
-
-mapping_data %>%
+mapping_data_all_map <- mapping_data_all %>%
   
   leaflet() %>%
   
@@ -889,6 +979,182 @@ mapping_data %>%
     )
   ))
 
+# mapping_data_F + CLAC_1, 지역별 상위 5개, 지도 
+
+mapping_data_F <- list()
+mapping_data_F_top5 <- list()
+mapping_data_F_map <- list()
+for(i in seq(10,80,10)){
+  mapping_data_F[[i]]  <- tr_Product_Master_Custom_Session_original %>%
+    
+    filter(!is.na(CITY_NM) & !is.na(CLNT_GENDER)  & CLNT_GENDER=='F' & CLNT_AGE==paste0(i)) %>%
+    
+    group_by(CITY_NM, CLAC1_NM) %>%
+    
+    count() %>%
+    
+    left_join(ZON_NM_lat_long, c('CITY_NM')) %>%
+    
+    filter(!is.na(latitude))
+  
+  mapping_data_F_top5[[i]] <- mapping_data_F[[i]] %>% 
+    
+    arrange(CITY_NM, desc(n)) %>%
+    
+    select(CITY_NM, CLAC1_NM, n) %>%
+    
+    group_by(CITY_NM) %>%
+    
+    top_n(5, n)
+  
+  factpal <- colorFactor(topo.colors(5), mapping_data_F[[i]]$CLAC1_NM)
+  
+  mapping_data_F_map[[i]] <- mapping_data_F[[i]] %>%
+    
+    leaflet() %>%
+    
+    addTiles() %>%
+    
+    addProviderTiles("CartoDB.Positron") %>%
+    
+    addCircleMarkers(~longitude, ~latitude,
+                     
+                     fillOpacity = 0.5, color = ~factpal(CLAC1_NM), radius = ~sqrt(n)*3,
+                     
+                     label = ~CLAC1_NM, popup = ~as.character(n),
+                     
+                     clusterOptions = markerClusterOptions(),
+                     
+                     clusterId = 'CLAC1_NM') %>%
+    
+    addEasyButton(easyButton(
+      states = list(
+        easyButtonState(
+          stateName="unfrozen-markers",
+          icon="ion-toggle",
+          title="Freeze Clusters",
+          onClick = JS("
+          function(btn, map) {
+            var clusterManager =
+              map.layerManager.getLayer('cluster', 'CLAC1_NM');
+            clusterManager.freezeAtZoom();
+            btn.state('frozen-markers');
+          }")
+        ),
+        easyButtonState(
+          stateName="frozen-markers",
+          icon="ion-toggle-filled",
+          title="UnFreeze Clusters",
+          onClick = JS("
+          function(btn, map) {
+            var clusterManager =
+              map.layerManager.getLayer('cluster', 'CLAC1_NM');
+            clusterManager.unfreeze();
+            btn.state('unfrozen-markers');
+          }")
+        )
+      )
+    ))
+}
+
+mapping_F <- function(x){
+  print(mapping_data_F[[x]])
+  print(mapping_data_F_top5[[x]])
+  mapping_data_F_map[[x]]
+} 
+
+# mapping_data_M + CLAC_1, 지역별 상위 5개, 지도 
+
+mapping_data_M <- list()
+mapping_data_M_top5 <- list()
+mapping_data_M_map <- list()
+for(i in seq(10,80,10)){
+  mapping_data_M[[i]]  <- tr_Product_Master_Custom_Session_original %>%
+    
+    filter(!is.na(CITY_NM) & !is.na(CLNT_GENDER)  & CLNT_GENDER=='M' & CLNT_AGE==paste0(i)) %>%
+    
+    group_by(CITY_NM, CLAC1_NM) %>%
+    
+    count() %>%
+    
+    left_join(ZON_NM_lat_long, c('CITY_NM')) %>%
+    
+    filter(!is.na(latitude))
+  
+  mapping_data_M_top5[[i]] <- mapping_data_M[[i]] %>% 
+    
+    arrange(CITY_NM, desc(n)) %>%
+    
+    select(CITY_NM, CLAC1_NM, n) %>%
+    
+    group_by(CITY_NM) %>%
+    
+    top_n(5, n)
+  
+  factpal <- colorFactor(topo.colors(5), mapping_data_M[[i]]$CLAC1_NM)
+  
+  mapping_data_M_map[[i]] <- mapping_data_M[[i]] %>%
+    
+    leaflet() %>%
+    
+    addTiles() %>%
+    
+    addProviderTiles("CartoDB.Positron") %>%
+    
+    addCircleMarkers(~longitude, ~latitude,
+                     
+                     fillOpacity = 0.5, color = ~factpal(CLAC1_NM), radius = ~sqrt(n)*3,
+                     
+                     label = ~CLAC1_NM, popup = ~as.character(n),
+                     
+                     clusterOptions = markerClusterOptions(),
+                     
+                     clusterId = 'CLAC1_NM') %>%
+    
+    addEasyButton(easyButton(
+      states = list(
+        easyButtonState(
+          stateName="unfrozen-markers",
+          icon="ion-toggle",
+          title="Freeze Clusters",
+          onClick = JS("
+                       function(btn, map) {
+                       var clusterManager =
+                       map.layerManager.getLayer('cluster', 'CLAC1_NM');
+                       clusterManager.freezeAtZoom();
+                       btn.state('frozen-markers');
+                       }")
+        ),
+        easyButtonState(
+          stateName="frozen-markers",
+          icon="ion-toggle-filled",
+          title="UnFreeze Clusters",
+          onClick = JS("
+                       function(btn, map) {
+                       var clusterManager =
+                       map.layerManager.getLayer('cluster', 'CLAC1_NM');
+                       clusterManager.unfreeze();
+                       btn.state('unfrozen-markers');
+                       }")
+        )
+          )
+          ))
+  }
+
+mapping_M <- function(x){
+  print(mapping_data_M[[x]])
+  print(mapping_data_M_top5[[x]])
+  mapping_data_M_map[[x]]
+} 
+
+mapping_data_all
+mapping_data_all_top5
+mapping_data_all_map
+
+mapping_M(50)
+
+mapping_F(30)
+
 # 어느 지역에만 특별히 잘팔리는 물건이 있을까?
 
 # 지역 별 홍보 전략 세우기(지역의 기후, 홍보 등등이 영향을 끼쳤을 것으로 생각 ) 
@@ -901,97 +1167,220 @@ mapping_data %>%
 
 # 상품군별 온라인 선호 지수란 어떤 사람이 제품을 구매하고 난 이력을 바탕으로 상품군들에 대한 그 사람의 선호하는 정도를 이야기하는 지표이다.
 
-# 대분류 지수, 중분류지수, 소분류지수 만들기 
+# 상품군별 온라인 선호 지수 
 
+# 일주일 간의 데이터를 바탕으로 
+# CLAC1의 상품군을 기준으로
+# 해당 상품군의 구매 빈도, 검색빈도를 통해 해당 상품군의 선호정도를 지수로 나타낸다.
 
+CLAC2당 구매수와 CLAC2 개수를 기반으로 최다 구매수를 얻은 상품군의 선호도를 반영한
+지수를 통해 일주일간의 어떤 상품 군이 구매자들에게 가장 선호도를 가지는지 파악가능. 지수는 다음을 반영
 
-## 대분류지수
+1) 	일주일 간 CLAC2 상품군 당 평균 구매빈도수, max 빈도수 
 
-# 1. Freq_index 생성
+2)  CLAC2의 일주일간 비구매 항목은 감점요인 
 
-Freq_NNA_index <-  tr_Product_original %>%
+3) 	평균 CLAC2 구매수는 핵심 CLAC2로 가산요인으로 설정
+
+4) 	최다 구매수 CLAC2는 핵심 CLAC2로 가산 요인으로 설정
+
+5)  CLAC2에서 고른 선호를 받는 상품군(CLAC1)일수록 구매자들들이 선호하는 상품군이다. 
+
+week_mean_max <- tr_Product_original %>%
   
   left_join(tr_Master_original, c('PD_C')) %>%
   
   left_join(tr_Custom_original, c('CLNT_ID')) %>%
   
-  filter(!is.na(CLNT_GENDER)) %>%
+  left_join(tr_Session_original, c('CLNT_ID','SESS_ID')) %>%
   
-  group_by(CLAC1_NM,CLNT_GENDER,CLNT_AGE) %>%
+  filter(!is.na(SESS_DT)) %>%
+  
+  mutate(week = week(SESS_DT),
+         month = month(SESS_DT),
+         count = 1) %>%
+  
+  group_by(week, CLAC1_NM, CLAC2_NM) %>%
+  
+  summarise(CLAC2_week_mean = round(sum(count)/7,3)) %>%
+  
+  left_join(tr_Product_original %>%
+              
+              left_join(tr_Master_original, c('PD_C')) %>%
+              
+              left_join(tr_Custom_original, c('CLNT_ID')) %>%
+              
+              left_join(tr_Session_original, c('CLNT_ID','SESS_ID')) %>%
+              
+              filter(!is.na(SESS_DT)) %>%
+              
+              mutate(week = week(SESS_DT),
+                     month = month(SESS_DT)) %>%
+              
+              group_by(week, CLAC1_NM, CLAC2_NM) %>%
+              
+              count() %>%
+              
+              group_by(week, CLAC1_NM) %>%
+              
+              mutate(max = max(n)) %>%
+              
+              filter(n == max) %>%
+              
+              select(week, CLAC1_NM, CLAC2_NM, max), c('week', 'CLAC1_NM', 'CLAC2_NM')) %>%
+  
+  group_by(week, CLAC1_NM) %>%
+  
+  summarise(mean = mean(CLAC2_week_mean)) %>%
+  
+  left_join(
+    
+    tr_Product_original %>%
+      
+      left_join(tr_Master_original, c('PD_C')) %>%
+      
+      left_join(tr_Custom_original, c('CLNT_ID')) %>%
+      
+      left_join(tr_Session_original, c('CLNT_ID','SESS_ID')) %>%
+      
+      filter(!is.na(SESS_DT)) %>%
+      
+      mutate(week = week(SESS_DT),
+             month = month(SESS_DT),
+             count = 1) %>%
+      
+      group_by(week, CLAC1_NM, CLAC2_NM) %>%
+      
+      summarise(CLAC2_week_mean = round(sum(count)/7,3)) %>%
+      
+      left_join(tr_Product_original %>%
+                  
+                  left_join(tr_Master_original, c('PD_C')) %>%
+                  
+                  left_join(tr_Custom_original, c('CLNT_ID')) %>%
+                  
+                  left_join(tr_Session_original, c('CLNT_ID','SESS_ID')) %>%
+                  
+                  filter(!is.na(SESS_DT)) %>%
+                  
+                  mutate(week = week(SESS_DT),
+                         month = month(SESS_DT)) %>%
+                  
+                  group_by(week, CLAC1_NM, CLAC2_NM) %>%
+                  
+                  count() %>%
+                  
+                  group_by(week, CLAC1_NM) %>%
+                  
+                  mutate(max = max(n)) %>%
+                  
+                  filter(n == max) %>%
+                  
+                  select(week, CLAC1_NM, CLAC2_NM, max), c('week', 'CLAC1_NM', 'CLAC2_NM')) %>%
+      
+      filter(!is.na(max)) %>%
+      
+      select(week, CLAC1_NM, max) %>%
+      
+      mutate(max = log(max)+1),
+    
+    c('week', 'CLAC1_NM'))
+
+week_no_sale <- tr_Product_original %>%
+  
+  left_join(tr_Master_original, c('PD_C')) %>%
+  
+  left_join(tr_Custom_original, c('CLNT_ID')) %>%
+  
+  left_join(tr_Session_original, c('CLNT_ID','SESS_ID')) %>%
+  
+  filter(!is.na(SESS_DT)) %>%
+  
+  mutate(week = week(SESS_DT),
+         month = month(SESS_DT),
+         count = 1) %>%
+  
+  group_by(week, CLAC1_NM, CLAC2_NM) %>%
+  
+  summarise(CLAC2_week_mean = round(sum(count)/7,3)) %>%
+  
+  select(week, CLAC1_NM, CLAC2_NM) %>%
+  
+  group_by(week, CLAC1_NM) %>%
   
   count() %>%
   
-  mutate(n = round(log(n),3)) %>%
+  left_join(tr_Master_original %>%
+              
+              select(CLAC1_NM, CLAC2_NM) %>%
+              
+              group_by(CLAC1_NM, CLAC2_NM) %>%
+              
+              count() %>%
+              
+              arrange(CLAC1_NM) %>%
+              
+              select(CLAC1_NM, CLAC2_NM) %>%
+              
+              group_by(CLAC1_NM) %>%
+              
+              summarise(count = n()),
+            
+            c('CLAC1_NM')) %>%
   
-  arrange(desc(n))
+  mutate(diff = count - n)
 
-Freq_NA_index <-  tr_Product_original %>%
+freq_index_material <- week_mean_max %>%
+  
+  left_join(week_no_sale, c('week','CLAC1_NM')) %>%
+  
+  mutate(no_sale_pop = diff/count)
+
+save(freq_index_material, file = "C:/Project/GreenBand_Lpoint5/Source/Code/R/freq_index_material.RData")
+
+freq_index <- freq_index_material %>%
+  
+  mutate(index = (0.8*mean + 0.2*max)*(1-no_sale_pop)) %>%
+  
+  select(week, CLAC1_NM, index)
+
+save(freq_indexl, file = "C:/Project/GreenBand_Lpoint5/Source/Code/R/freq_index.RData")
+
+
+#=====================================================================================================================
+# Step 5 :  수요 트렌트 예측 
+#=====================================================================================================================
+
+time_original <- tr_Product_original %>%
   
   left_join(tr_Master_original, c('PD_C')) %>%
   
   left_join(tr_Custom_original, c('CLNT_ID')) %>%
   
-  filter(is.na(CLNT_GENDER)) %>%
+  left_join(tr_Session_original, c('CLNT_ID','SESS_ID')) %>%
   
-  group_by(CLAC1_NM,CLNT_GENDER,CLNT_AGE) %>%
+  filter(!is.na(SESS_DT))
+
+
+library(ggthemes)
+
+ggplotly(
+time_original %>%
+  
+  group_by(SESS_DT, CLAC1_NM) %>%
   
   count() %>%
   
-  mutate(n = round(log(n),3)) %>%
+  ggplot(aes(x = SESS_DT, y = n)) +
   
-  arrange(desc(n))
-
-
-
-
-
-
-
-View(
-tr_Product_original %>%
+  geom_line(size = 0.5, aes(color = CLAC1_NM)) +
   
-  left_join(tr_Master_original, c('PD_C')) %>%
+  facet_wrap(~ CLAC1_NM) +
   
-  left_join(tr_Custom_original, c('CLNT_ID')) %>%
+  labs(title = 'CLAC1의 세션 날짜별 상품 판매량') +
   
-  left_join(tr_Session_original, c('CLNT_ID','SESS_ID')) 
-)
-%>%
-  
-  filter(!is.na(CLNT_GENDER)) 
-
-  
-  group_by(CLAC1_NM,CLNT_GENDER,CLNT_AGE) %>%
-  
-
-
-
-## 중분류지수
-
-
-
-
-
-
-
-
-
-
-## 키워드 분석전에 검색어를 CLAC3의 분류에 속하도록 검색어를 분류하는 작업을 해야됨 .
-# 고려사항 2. 날짜별 키워드 -> 실질적 구매자의 검색어 분석  
-Integrated_Product
-# ? 고려사항 3. 검색량 - Search2 - 잠재적 구매자의 검색어 분석 
-
-View(tr_Search2_original) ; View(tr_Master_original)
- # KWD_NM 쪼개기
-test <- c("abc","def")
-
-KWD_NM <- gsub(c("브랜드 네임") ,"" ,tr_Search2_original$KWD_NM)
-
-View(tr_Search2_original$KWD_NM[tr_Search2_original$KWD_NM %in% tr_Master_original$CLAC3_NM])
-
-
-# 고려사항 5. 일주일 단위 집계로 선호도의 변화 양상을 살펴본다. 
-
-# 고려사항 6. 방문 빈도 
+  theme(plot.title = element_text(family = "serif", face = "bold", hjust = 0.5, size = 15),
+        axis.text.x  = element_text(angle=45, hjust=1, vjust=0.9),
+        legend.position = 'none')
+)  
 
